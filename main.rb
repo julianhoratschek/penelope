@@ -1,27 +1,82 @@
 # frozen_string_literal: true
 
+##
+# Holds information about one dice roll
 class Roll
-  attr_reader :value, :against, :success, :crit
+  attr_reader :value, :against
 
-  def initialize(value, against = 0)
+  private
+
+  ##
+  # Update success and critical values
+  def get_succ
+    return if @against.nil?
+
+    @success = @value <= @against
+    @crit = @success ? @value <= @against / 10 : 100 - @against / 10 < @value
+  end
+
+  public
+
+  def initialize(value, against = nil)
     @value = value
     @against = against
+    @success = nil
+    @crit = nil
 
-    @success = against != 0 ? value <= against : nil
-    @crit = @success ? value <= against / 10 : 100 - against / 10 < value
+    get_succ
+  end
+
+  def *(other)
+    @value *= other
+    get_succ
+    self
+  end
+
+  def +(other)
+    @value += other
+    get_succ
+    self
+  end
+
+  def -(other)
+    @value -= other
+    get_succ
+    self
   end
 
   def is_crit?; @crit end
   def is_succ?; @success end
   def is_fail?; !@success end
+
+  def to_s; @value.to_s end
+  def to_i; @value end
+
+  def inspect
+    ""
+  end
 end
 
+##
 # Creates and throws dice with different sides
 class Dice
   @instances ||= {}
 
   attr_reader :history
 
+  private
+
+  ##
+  # Do not call the constructor directly
+  def initialize(sides = nil)
+    @history = []
+    @sides = sides || 20
+  end
+
+  public
+
+  ##
+  # Searches for existing instances or creates a new one
   def self.get(sides = nil)
     if sides && @instances.include?(sides)
       @instances[sides]
@@ -30,23 +85,20 @@ class Dice
     end
   end
 
-  def initialize(sides = nil)
-    @history = []
-    @sides = sides || 20
-  end
-
-  def roll
-    @history.push(rand(@sides) + 1)[-1]
+  ##
+  # Create a new Roll instance and save it in this dices history
+  def roll(against = nil)
+    @history.push(Roll.new(rand(@sides) + 1, against)).last
   end
 
   def to_s; roll.to_s end
-
-  def to_i; roll end
 end
 
 
+##
 # Main module to catch all shortcuts
 module Penelope
+
   ##
   # Looks for d10, d20, d100 etc. formed methods and creates die with
   # the desired sides.
@@ -64,18 +116,14 @@ module Penelope
     # The output is printed in colors (red: fail, green: success)
     # Critical throws are marked with !!
     def check(dice = d100)
-      dice_roll = dice.roll
+      dice_roll = dice.roll against=self
 
-      if dice_roll <= self
-        crit = dice_roll <= self / 10
-        code = 112
-      else
-        crit = 100 - self / 10 < dice_roll
-        code = 160
-      end
+      code = dice_roll.is_succ?? 112 : 160
 
-      print "\e[38;5;160m\u203c " if crit
+      print "\e[38;5;160m\u203c " if dice_roll.is_crit?
       puts "\e[38;5;#{code}m #{self} \e[38;5;#{code}m\u2684 #{dice_roll}\e[0m"
+
+      dice_roll
     end
 
     alias ck check
@@ -112,6 +160,8 @@ end
 class Npc
   @npc_count ||= {}
 
+  ##
+  # Add or access any attributes provided by the user
   def method_missing(name, *args)
     return @attributes[name.chop.to_sym] = args[0] if name[-1] == '='
     return @attributes[name] if @attributes.include? name
@@ -121,6 +171,8 @@ class Npc
 
   private
 
+  ##
+  # Keep track of how many instances of this npc-prefab have been created, change name accordingly
   def self.count(attributes)
     name = attributes[:name]
     if @npc_count.include? name
@@ -153,6 +205,8 @@ end
 include Penelope
 using Penelope
 
+puts d50
+
 players = Array.new(3) { Player.new }
 ina, carlotta, neele = players
 
@@ -160,5 +214,17 @@ goblin = Npc.new name: 'goblin', hp: 10, atk: 45, dmg: d6
 enemies = goblin * 4
 enemies.each do |e|
   puts e.name
-  e.atk.ck
+  r = e.atk.ck
+  if r.is_succ?
+    dmg = e.dmg.roll
+    dmg *= 2 if r.is_crit?
+    puts "  Dmg: #{dmg}"
+  else
+    puts "  Failed"
+  end
+end
+
+d100.history.each do |roll|
+  print roll
+  puts
 end
