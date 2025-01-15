@@ -16,30 +16,31 @@ class Inventory
 
 end
 
-class Player
-  # Quick create
-  # set name
-  # set nicknames
-  # set action, wisdom, social
-  # calculate values
-  # inventory
-
-  def initialize
-  end
-
-end
-
-
 include Penelope
 using Penelope
 
-puts d50
+players = [
+  Player.new(
+      name: 'Agnes',
+      age: 58,
+      action: Skills.new(
+          reinigen: 85,
+          elderly_elbows: 85
+      )
+  ),
+  Player.new(name: 'Hermann'),
+  Player.new(name: 'Richard')
+]
 
-players = Array.new(3) { Player.new }
-ina, carlotta, neele = players
+ina, neele, carlotta = players
 
 goblin = Npc.new name: 'goblin', hp: 10, atk: 45, dmg: d6
 enemies = goblin * 4
+
+print initiative(players + enemies)
+
+return
+
 enemies.each do |e|
   puts e.name
   r = e.atk.ck

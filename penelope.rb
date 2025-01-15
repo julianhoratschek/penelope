@@ -2,6 +2,8 @@
 
 require_relative 'dice'
 require_relative 'npc'
+require_relative 'player'
+require_relative 'fight'
 
 ##
 # Main module to catch all shortcuts
@@ -14,6 +16,14 @@ module Penelope
     return Dice.get str_name[1..].to_i if str_name.match?(/d\d+/i)
 
     super
+  end
+
+  def initiative(people)
+    people
+      .map { |character| [character.action + d10, character] }
+      .sort_by! { |element| element[0] }
+      .transpose[1]
+      .reverse
   end
 
   refine Integer do

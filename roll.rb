@@ -53,6 +53,10 @@ class Roll
     !@success
   end
 
+  def coerce(other)
+    [other, @value]
+  end
+
   def to_s
     return @value.to_s if @against.nil?
 
