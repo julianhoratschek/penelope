@@ -2,20 +2,6 @@
 
 require_relative 'penelope'
 
-class Item
-  # Quick create
-  # Set name
-  # Set nickname
-  # write comments
-  # who owns
-  # add values
-
-end
-
-class Inventory
-
-end
-
 include Penelope
 using Penelope
 
@@ -45,14 +31,9 @@ players = [
   )
 ]
 
-ina, neele, carlotta = players
-puts ina
-puts neele
-
 goblin = Npc.new name: 'goblin', hp: 10, atk: 45, dmg: d6
 enemies = goblin * 4
 
-return
 
 enemies.each do |e|
   puts e.name
