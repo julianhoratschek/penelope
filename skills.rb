@@ -1,12 +1,27 @@
 # frozen_string_literal: true
 
+require_relative 'dynamic'
 
-class Skills
-  def initialize(**attributes)
-    @attributes = attributes
-    @sum = (@attributes.values.sum.to_f / 10.0).round
+class Skills < Dynamic
+  def initialize(sum = nil, **attributes)
+    if sum.nil?
+      super(attributes)
+      recalculate
+    else
+      super({})
+      @sum = sum
+      @bolts = 0
+    end
+  end
+
+  def recalculate
+    @sum = @attributes.empty? ? 0 : (@attributes.values.sum.to_f / 10.0).round
     @bolts = (@sum.to_f / 10.0).round
     @attributes.transform_values! { |value| value + @sum }
+  end
+
+  def set(value)
+    @sum = value
   end
 
   def +(other)

@@ -7,29 +7,33 @@ require_relative 'character'
 class Npc < Character
   @npc_count ||= {}
 
+  class << self
+    attr_reader :npc_count
+  end
+
   ##
   # Keep track of how many instances of this NPC-prefab have been created, change name accordingly
-  def self.count(attributes)
-    name = attributes[:name]
-    if @npc_count.include? name
-      @npc_count[name] += 1
-      attributes[:name] = "#{name} #{@npc_count[name]}"
+  def count
+    name = @attributes[:name]
+    if Npc.npc_count.include? name
+      Npc.npc_count[name] += 1
+      @attributes[:name] = "#{name} #{Npc.npc_count[name]}"
     else
-      @npc_count[name] = 0
+      Npc.npc_count[name] = 0
     end
   end
 
-  def initialize(attributes)
+  def initialize(**attributes)
     super(attributes)
-    Npc.count @attributes
+    count
   end
 
   def rename(new_name)
-    super(new_name).tap { Npc.count @attributes }
+    super(new_name).tap { count }
   end
 
   def *(other)
-    Array.new(other) { Npc.new(@attributes) }
+    Array.new(other) { Npc.new(**@attributes) }
   end
 end
 
