@@ -4,16 +4,27 @@ module Glue
   @@players = []
   @@npcs = []
 
-  def self.save_all(file_name)
-    File.open(file_name, 'w') do |fl|
-      fl.write(Marshal.dump({players: @@players, npcs: @@npcs}))
-    end
+  def self.players
+    @@players
   end
 
-  def self.load(file_name)
-    loaded = Marshal.load(File.new(file_name))
-    @@players = loaded[:players]
-    @@npcs = loaded[:npcs]
-    loaded
+  def self.players=(other)
+    @@players = other
+  end
+
+  def self.npcs
+    @@npcs
+  end
+
+  def self.npcs=(other)
+    @@npcs = other
+  end
+
+  def self.find(name)
+    idx = @@players.index { |player| player[:name].downcase == name.downcase }
+    return @@players[idx] unless idx.nil?
+
+    idx = @@npcs.index { |npc| npc[:name].downcase == name.downcase }
+    @@npcs.fetch(idx, nil)
   end
 end

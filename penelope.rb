@@ -26,6 +26,18 @@ module Penelope
       .reverse
   end
 
+  def get(name)
+    Glue.find(name)
+  end
+
+  def players
+    Glue.players
+  end
+
+  def npcs
+    Glue.npcs
+  end
+
   def player(**attributes)
     Player.new(**attributes)
   end
