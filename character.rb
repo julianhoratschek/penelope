@@ -46,5 +46,9 @@ class Character < Dynamic
     result += skills(:wissen)
     result + skills(:sozial)
   end
+
+  def inspect
+    to_s
+  end
 end
 

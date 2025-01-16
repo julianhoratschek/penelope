@@ -9,6 +9,7 @@ class Dice
   @instances ||= {}
 
   attr_reader :history
+  private :initialize
 
   ##
   # Do not call the constructor directly

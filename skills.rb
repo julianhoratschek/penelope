@@ -43,6 +43,14 @@ class Skills < Dynamic
   end
 
   def to_s
-    "Summe: #{@sum}\n\n" + @attributes.sum('') { |key, value| "  #{value}: #{key}\n" }
+    @attributes.sum(
+      "Gesamt: #{@sum}  #{@bolts}\n------\n\n"
+    ) do |name, value|
+      "    - #{name.to_s.gsub('_', ' ').capitalize}: #{value}\n"
+    end
+  end
+
+  def inspect
+    to_s
   end
 end

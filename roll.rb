@@ -7,7 +7,7 @@ class Roll
 
   ##
   # Update success and critical values
-  def get_succ
+  def evaluate
     return if @against.nil?
 
     @success = @value <= @against
@@ -20,25 +20,19 @@ class Roll
     @success = nil
     @crit = nil
 
-    get_succ
+    evaluate
   end
 
   def *(other)
-    @value *= other
-    get_succ
-    self
+    Roll.new(@value * other, @against)
   end
 
   def +(other)
-    @value += other
-    get_succ
-    self
+    Roll.new(@value + other, @against)
   end
 
   def -(other)
-    @value -= other
-    get_succ
-    self
+    Roll.new(@value - other, @against)
   end
 
   def crit?

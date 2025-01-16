@@ -38,6 +38,41 @@ module Penelope
     Skills.new(sum, **attributes)
   end
 
+  def save_game(bnd, file_name)
+    data = { players: [], npcs: [], vars: {} }
+
+    bnd.local_variables.each do |var|
+      value = bnd.local_variable_get(var)
+
+      case value
+      when Player
+        data[:players] << value
+        data[:vars][var] = [:players, data[:players].length - 1]
+      when Npc
+        data[:npcs] << value
+        data[:vars][var] = [:npcs, data[:npcs].length - 1]
+      end
+    end
+
+    File.open(file_name, 'w') do |fl|
+      Marshal.dump(data, fl)
+    end
+  end
+
+  def load_game(bnd, file_name)
+    data = {}
+    File.open(file_name) do |fl|
+      data = Marshal.load(fl)
+    end
+
+    bnd.local_variable_set(:players, data[:players])
+    bnd.local_variable_set(:npcs, data[:npcs])
+
+    data[:vars].each_pair do |name, idx|
+      bnd.local_variable_set(name.to_sym, data[idx[0].to_sym][idx[1]])
+    end
+  end
+
   refine Integer do
     ##
     # Tests this Integer versus a die-roll.
@@ -50,5 +85,9 @@ module Penelope
     end
 
     alias_method :ck, :check
+  end
+
+  def check(number, dice = d100)
+    number.check(dice)
   end
 end

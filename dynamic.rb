@@ -5,7 +5,7 @@ class Dynamic
   # Add or access any attributes provided by the user
   def method_missing(name, *args)
     if name[-1] == '='
-      @attributes[name.chop.to_sym] = args[0]
+      @attributes[name.to_s.chop.to_sym] = args[0]
       attribute_added
       return
     end

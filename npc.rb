@@ -39,5 +39,13 @@ class Npc < Character
   def *(other)
     Array.new(other) { Npc.new(**@attributes) }
   end
+
+  def to_s
+    Npc.npc_count.to_s + ' ' + super
+  end
+
+  def inspect
+    to_s
+  end
 end
 
