@@ -20,7 +20,7 @@ module Penelope
 
   def initiative(people)
     people
-      .map { |character| [character.action + d10, character] }
+      .map { |character| [character.handeln + d10, character] }
       .sort_by! { |element| element[0] }
       .transpose[1]
       .reverse

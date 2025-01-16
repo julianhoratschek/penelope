@@ -3,6 +3,12 @@
 require_relative 'dynamic'
 
 class Skills < Dynamic
+  attr_reader :sum, :attributes, :bolts
+
+  def attribute_added
+    recalculate
+  end
+
   def initialize(sum = nil, **attributes)
     if sum.nil?
       super(attributes)
@@ -18,10 +24,6 @@ class Skills < Dynamic
     @sum = @attributes.empty? ? 0 : (@attributes.values.sum.to_f / 10.0).round
     @bolts = (@sum.to_f / 10.0).round
     @attributes.transform_values! { |value| value + @sum }
-  end
-
-  def set(value)
-    @sum = value
   end
 
   def +(other)
@@ -41,6 +43,6 @@ class Skills < Dynamic
   end
 
   def to_s
-    @attributes.sum('') { |key, value| "  #{value}: #{key}\n" } + "  Base: #{@sum}"
+    "Summe: #{@sum}\n\n" + @attributes.sum('') { |key, value| "  #{value}: #{key}\n" }
   end
 end

@@ -21,18 +21,32 @@ using Penelope
 
 players = [
   Player.new(
-      name: 'Agnes',
-      age: 58,
-      action: Skills.new(
-          reinigen: 85,
-          elderly_elbows: 85
-      )
+    name: 'Agnes',
+    alter: 58,
+    handeln: Skills.new(
+      reinigen: 85,
+      elderly_elbows: 85
+    )
   ),
-  Player.new(name: 'Hermann'),
-  Player.new(name: 'Richard')
+  Player.new(
+    name: 'Hermann',
+    alter: 48,
+    handeln: Skills.new(
+      dinge_abschießen: 50,
+      handwerk: 85,
+      kneipenschlägerei: 89
+    ),
+    wissen: Skills.new(
+      grasshüpfer: 40
+    )
+  ),
+  Player.new(
+    name: 'Richard'
+  )
 ]
 
 ina, neele, carlotta = players
+puts neele
 
 goblin = Npc.new name: 'goblin', hp: 10, atk: 45, dmg: d6
 enemies = goblin * 4

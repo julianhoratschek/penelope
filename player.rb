@@ -7,4 +7,6 @@ class Player < Character
   def initialize(**attributes)
     super(**attributes)
   end
+
+
 end
