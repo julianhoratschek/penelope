@@ -26,6 +26,18 @@ module Penelope
       .reverse
   end
 
+  def player(**attributes)
+    Player.new(**attributes)
+  end
+
+  def npc(**attributes)
+    Npc.new(**attributes)
+  end
+
+  def skills(sum = nil, **attributes)
+    Skills.new(sum, **attributes)
+  end
+
   refine Integer do
     ##
     # Tests this Integer versus a die-roll.

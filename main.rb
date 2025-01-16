@@ -20,38 +20,37 @@ include Penelope
 using Penelope
 
 players = [
-  Player.new(
+  player(
     name: 'Agnes',
     alter: 58,
-    handeln: Skills.new(
+    handeln: skills(
       reinigen: 85,
       elderly_elbows: 85
     )
   ),
-  Player.new(
+  player(
     name: 'Hermann',
     alter: 48,
-    handeln: Skills.new(
+    handeln: skills(
       dinge_abschießen: 50,
       handwerk: 85,
       kneipenschlägerei: 89
     ),
-    wissen: Skills.new(
+    wissen: skills(
       grasshüpfer: 40
     )
   ),
-  Player.new(
+  player(
     name: 'Richard'
   )
 ]
 
 ina, neele, carlotta = players
+puts ina
 puts neele
 
 goblin = Npc.new name: 'goblin', hp: 10, atk: 45, dmg: d6
 enemies = goblin * 4
-
-print initiative(players + enemies)
 
 return
 

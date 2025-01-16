@@ -1,5 +1,6 @@
 # frozen_string_literal: false
 
+require_relative 'glue'
 require_relative 'skills'
 
 class Character < Dynamic
@@ -32,7 +33,7 @@ class Character < Dynamic
     attr_symbol = (Character.icons.include? attr_name) ? Character.icons[attr_name] : ' '
     result = "  #{attr_symbol} #{attr_name.to_s.capitalize}: #{@attributes[attr_name].sum}  #{@attributes[attr_name].bolts}\n  ------\n\n"
     @attributes[attr_name].attributes.each_pair do |name, value|
-      result += "    - #{name}: #{value}\n"
+      result += "    - #{name.to_s.gsub('_', ' ').capitalize}: #{value}\n"
     end
     result + "\n"
   end

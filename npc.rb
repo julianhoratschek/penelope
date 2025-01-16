@@ -5,6 +5,8 @@ require_relative 'character'
 ##
 # Base Class to quickly create throw-away NPC for fights
 class Npc < Character
+  include Glue
+
   @npc_count ||= {}
 
   class << self
@@ -20,6 +22,7 @@ class Npc < Character
       @attributes[:name] = "#{name} #{Npc.npc_count[name]}"
     else
       Npc.npc_count[name] = 0
+      @@npcs << self
     end
   end
 
@@ -29,7 +32,8 @@ class Npc < Character
   end
 
   def rename(new_name)
-    super(new_name).tap { count }
+    super(new_name)
+    tap { count }
   end
 
   def *(other)

@@ -1,12 +1,35 @@
 # frozen_string_literal: false
 
-
-def fun(**args)
-  args.each_pair { |key, val|
-    puts "#{key} #{val}"
-  }
+module M
+  @@test = []
 end
 
-a = {:hello => "Hello", :world => "World"}
-a => {hello:, world:}
-puts "#{hello} #{world}"
+class C
+  include M
+
+  def initialize(name)
+    @@test << name
+  end
+
+  def test
+    @@test
+  end
+end
+
+class A
+  include M
+
+  def initialize(name)
+    @@test << name
+  end
+end
+
+
+a = C.new(1)
+b = C.new(2)
+c = C.new(3)
+d = A.new(4)
+e = A.new(5)
+f = A.new(6)
+
+puts c.test
