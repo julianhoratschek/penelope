@@ -21,10 +21,10 @@ module Glue
   end
 
   def self.find(name)
-    idx = @@players.index { |player| player[:name].downcase == name.downcase }
+    idx = @@players.index { |player| player.name.downcase == name.downcase }
     return @@players[idx] unless idx.nil?
 
-    idx = @@npcs.index { |npc| npc[:name].downcase == name.downcase }
+    idx = @@npcs.index { |npc| npc.name.downcase == name.downcase }
     @@npcs.fetch(idx, nil)
   end
 end

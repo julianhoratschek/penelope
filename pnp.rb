@@ -22,7 +22,7 @@ end
 
 ##
 # Main module to catch all shortcuts
-module Penelope
+module PNP
   ##
   # Stores local variables of toplevel scope after saving and loading
   @variables ||= {}
@@ -72,14 +72,26 @@ module Penelope
 
     if str_name[-1] == '='
       sym_name = str_name.chop.to_sym
-      return Penelope.variables[sym_name] = args[0] if Penelope.variables.include? sym_name
+      return PNP.variables[sym_name] = args[0] if PNP.variables.include? sym_name
     else
-      return Penelope.variables[name] if Penelope.variables.include? name
+      return PNP.variables[name] if PNP.variables.include? name
     end
 
     super
   end
 
+  ##
+  # Remove a local variable (if game was saved and loaded)
+  # Cave: This will not take care of removing a Player/Npc instance
+  # @param name [Symbol]
+  def undef(name)
+    PNP.variables.delete name
+  end
+
+  ##
+  # Roll for all instances in people on initiative according to HTBAH standard rules
+  # @param people [Array<Player, Npc>] List of all instances to roll for
+  # @return [Array<Player, Npc>] Ordered by initiative
   def initiative(people)
     people
       .map { |character| [character.handeln + d10, character] }
@@ -139,7 +151,7 @@ module Penelope
       vars: {},
     }
 
-    Penelope.variables.each_pair do |var_name, value|
+    PNP.variables.each_pair do |var_name, value|
       data[:vars][var_name] = _sort_by_type(value)
     end
 
@@ -168,7 +180,7 @@ module Penelope
     Glue.npcs = data[:npcs]
 
     data[:vars].each_pair do |var_name, where|
-      Penelope.variables[var_name] = _get_by_type(where)
+      PNP.variables[var_name] = _get_by_type(where)
     end
   end
 
@@ -180,9 +192,7 @@ module Penelope
     # The output is printed in colors (red: fail, green: success)
     # Critical throws are marked with !!
     def check(dice = d100)
-      dice_roll = dice.roll self
-      puts dice_roll
-      dice_roll
+      dice.roll(self).tap { |r| puts r }
     end
 
     alias_method :ck, :check

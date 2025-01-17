@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'penelope'
+require_relative 'pnp'
 
-include Penelope
-using Penelope
+include PNP
+using PNP
 
 players = [
   player(

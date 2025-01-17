@@ -4,7 +4,7 @@ require_relative 'glue'
 require_relative 'skills'
 
 class Character < Dynamic
-  @icons = {
+  @icons ||= {
     handeln: '󰓥',
     wissen: '󰧑',
     sozial: ''
@@ -31,20 +31,20 @@ class Character < Dynamic
 
   def attr_to_s(attr_name)
     attr_symbol = (Character.icons.include? attr_name) ? Character.icons[attr_name] : ' '
-    result = "  #{attr_symbol} #{attr_name.to_s.capitalize}: #{@attributes[attr_name].sum}  #{@attributes[attr_name].bolts}\n  ------\n\n"
+    result = "  #{attr_symbol} #{attr_name.to_s.capitalize}: #{@attributes[attr_name].sum}  #{@attributes[attr_name].bolts}\n  ------\n"
     @attributes[attr_name].attributes.each_pair do |name, value|
       result += "    - #{name.to_s.gsub('_', ' ').capitalize}: #{value}\n"
     end
     result + "\n"
   end
 
-  alias skills attr_to_s
+  alias pskills attr_to_s
 
   def to_s
-    result = " #{@attributes[:name]}\n---------\n\n"
-    result += skills(:handeln)
-    result += skills(:wissen)
-    result + skills(:sozial)
+    result = " #{@attributes[:name]}\n---------\n"
+    result += pskills(:handeln)
+    result += pskills(:wissen)
+    result + pskills(:sozial)
   end
 
   def inspect

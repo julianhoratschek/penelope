@@ -23,6 +23,16 @@ class Roll
     evaluate
   end
 
+  def check(against)
+    case against
+    when Integer then Roll.new(@value, against)
+    when Roll then Roll.new(@value, against.value)
+    else self
+    end
+  end
+
+  alias | check
+
   def *(other)
     Roll.new(@value * other, @against)
   end
