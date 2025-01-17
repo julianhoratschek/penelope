@@ -27,8 +27,14 @@ module Penelope
   # Stores local variables of toplevel scope after saving and loading
   @variables ||= {}
 
-  private :_sort_by_type, :_get_by_type
+  class << self
+    attr_reader :variables
+  end
 
+  ##
+  # Sort value by its class for saving. Player, Npc and Array are supported.
+  # @param value [Player, Npc, Array<Array, Player, Npc>] Value to store
+  # @return [SaveFormat, Array<Array, SaveFormat>, nil]
   def _sort_by_type(value)
     case value
     when Player then SaveFormat.new(:players, Glue.players.index { |e| e.equal? value })
@@ -38,6 +44,10 @@ module Penelope
     end
   end
 
+  ##
+  # Load SaveValue and read it from already loaded Glue Data
+  # @param where [SaveFormat, Array]
+  # @return [Player, Npc, Array, nil]
   def _get_by_type(where)
     case where
     when SaveFormat
@@ -51,6 +61,8 @@ module Penelope
     end
   end
 
+  private :_sort_by_type, :_get_by_type
+
   ##
   # Looks for d10, d20, d100 etc. formed methods and creates die with
   # the desired sides.
@@ -60,9 +72,9 @@ module Penelope
 
     if str_name[-1] == '='
       sym_name = str_name.chop.to_sym
-      return @variables[sym_name] = args[0] if @variables.include? sym_name
+      return Penelope.variables[sym_name] = args[0] if Penelope.variables.include? sym_name
     else
-      return @variables[name] if @variables.include? name
+      return Penelope.variables[name] if Penelope.variables.include? name
     end
 
     super
@@ -76,52 +88,76 @@ module Penelope
       .reverse
   end
 
+  ##
+  # Get any Player or Npc by its name
+  # @param name [String]
+  # @return [Player, Npc]
   def get(name)
     Glue.find(name)
   end
 
+  ##
+  # List of all registered Players
+  # @return [Array<Player>]
   def players
     Glue.players
   end
 
+  ##
+  # List of all registered Npc
+  # @return [Array<Npc>]
   def npcs
     Glue.npcs
   end
 
+  ##
+  # Create and register a new player
   def player(**attributes)
     Player.new(**attributes)
   end
 
+  ##
+  # Create and register a new Npc
   def npc(**attributes)
     Npc.new(**attributes)
   end
 
+  ##
+  # Create a new Skills instance. Should be used within Player or Npc initializer
   def skills(sum = nil, **attributes)
     Skills.new(sum, **attributes)
   end
 
-
-  def save_game(file_name)
+  ##
+  # Save the current game state to file_name
+  # @param bnd [Binding] Binding to save from
+  # @param file_name [String] File to save game state to
+  def save_game(bnd, file_name)
     data = {
       players: Glue.players,
       npcs: Glue.npcs,
       vars: {},
     }
 
-    @variables.each_pair do |var_name, value|
+    Penelope.variables.each_pair do |var_name, value|
       data[:vars][var_name] = _sort_by_type(value)
     end
 
-    TOPLEVEL_BINDING.local_variables.each do |var_name|
-      value = TOPLEVEL_BINDING.local_variable_get(var_name)
+    bnd.local_variables.each do |var_name|
+      value = bnd.local_variable_get(var_name)
       data[:vars][var_name] = _sort_by_type(value)
     end
+
+    data[:vars].delete(:_)
 
     File.open(file_name, 'w') do |fl|
       Marshal.dump(data, fl)
     end
   end
 
+  ##
+  # Load Game state from a file
+  # @param file_name [String] Name of the file to load from
   def load_game(file_name)
     data = {}
     File.open(file_name) do |fl|
@@ -132,7 +168,7 @@ module Penelope
     Glue.npcs = data[:npcs]
 
     data[:vars].each_pair do |var_name, where|
-      @variables[var_name] = _get_by_type(where)
+      Penelope.variables[var_name] = _get_by_type(where)
     end
   end
 
