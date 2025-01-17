@@ -23,12 +23,20 @@ class Roll
     evaluate
   end
 
+  ##
+  # Check value of this roll against another value
+  # @param other [Integer, Dice, Roll] Value to check this roll against
+  # @return [Roll] A new roll with other.to_i as value and @value as against
   def |(other)
     Roll.new(other.to_i, @value)
   end
 
   alias check |
 
+  ##
+  # Creates new Roll with self.value multiplied by other
+  # @param other [Integer, Roll, Dice]
+  # @return [Roll]
   def *(other)
     Roll.new(@value * other.to_i, @against)
   end
@@ -41,14 +49,23 @@ class Roll
     Roll.new(@value - other.to_i, @against)
   end
 
+  ##
+  # Return true if this roll was critical. If success or failure should be determined by succ?
+  # @return [Boolean]
   def crit?
     @crit
   end
 
+  ##
+  # Returns true if this roll was a success, otherwise false
+  # @return [Boolean]
   def succ?
     @success
   end
 
+  ##
+  # Returns true if this roll was a failure, otherwise true
+  # @return [Boolean]
   def fail?
     !@success
   end
@@ -57,6 +74,10 @@ class Roll
     [Roll.new(other.to_i, nil), self]
   end
 
+  ##
+  # Pretty representation of this roll containing information about success, critical status
+  # as well as value and what it was measured against
+  # @return [String]
   def to_s
     return @value.to_s if @against.nil?
 
@@ -65,6 +86,9 @@ class Roll
     "#{crit_msg}\e[38;5;#{code}m #{@against} \e[38;5;#{code}m󰝮 #{@value}\e[0m"
   end
 
+  ##
+  # Returns the integer value of this roll
+  # @return [Integer]
   def to_i
     @value
   end

@@ -30,25 +30,26 @@ class Character < Dynamic
   end
 
   def attr_to_s(attr_name)
-    attr_symbol = (Character.icons.include? attr_name) ? Character.icons[attr_name] : ' '
+    attr_symbol = Character.icons.include?(attr_name) ? Character.icons[attr_name] : ' '
     result = "  #{attr_symbol} #{attr_name.to_s.capitalize}: #{@attributes[attr_name].sum}  #{@attributes[attr_name].bolts}\n  ------\n"
-    @attributes[attr_name].attributes.each_pair do |name, value|
-      result += "    - #{name.to_s.gsub('_', ' ').capitalize}: #{value}\n"
-    end
-    result + "\n"
+
+    @attributes[attr_name]
+      .attributes
+      .sum(result) { |name, value| "    - #{name.to_s.gsub('_', ' ').capitalize}: #{value}\n" }
+
+    # @attributes[attr_name].attributes.each_pair do |name, value|
+    #   result += "    - #{name.to_s.gsub('_', ' ').capitalize}: #{value}\n"
+    # end
+    # result + "\n"
   end
 
-  alias pskills attr_to_s
-
   def to_s
-    result = " #{@attributes[:name]}\n---------\n"
-    result += pskills(:handeln)
-    result += pskills(:wissen)
-    result + pskills(:sozial)
+    " #{@attributes[:name]}\n---------\n#{attr_to_s(:handeln)}\n#{attr_to_s(:wissen)}\n#{attr_to_s(:sozial)}\n"
   end
 
   def inspect
-    to_s
+    a, k, s = @attributes.fetch_values(:handeln, :wissen, :sozial)
+    " #{@attributes[:name]}: 󰓥 #{a.sum}(#{a.bolts}) 󰧑 #{k.sum}(#{k.bolts})  #{s.sum}(#{s.bolts})\n"
   end
 end
 

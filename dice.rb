@@ -50,6 +50,9 @@ class Dice
     roll * other.to_i
   end
 
+  ##
+  # Dice does not really provide an interface, so coerce returns two Roll instances
+  # @return [Roll]
   def coerce(other)
     [Roll.new(other, nil), roll]
   end

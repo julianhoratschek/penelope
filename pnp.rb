@@ -40,7 +40,6 @@ module PNP
     when Player then SaveFormat.new(:players, Glue.players.index { |e| e.equal? value })
     when Npc then SaveFormat.new(:npcs, Glue.npcs.index { |e| e.equal? value })
     when Array then value.map { |e| _sort_by_type(e) }.compact!
-    else nil
     end
   end
 
@@ -54,10 +53,8 @@ module PNP
       case where.type
       when :players then Glue.players[where.index]
       when :npcs then Glue.npcs[where.index]
-      else nil
       end
     when Array then where.map { |e| _get_by_type(e) }.compact!
-    else nil
     end
   end
 
@@ -72,12 +69,12 @@ module PNP
 
     if str_name[-1] == '='
       sym_name = str_name.chop.to_sym
-      return PNP.variables[sym_name] = args[0] if PNP.variables.include? sym_name
+      PNP.variables[sym_name] = args[0] if PNP.variables.include? sym_name
+    elsif PNP.variables.include? name
+      PNP.variables[name]
     else
-      return PNP.variables[name] if PNP.variables.include? name
+      super
     end
-
-    super
   end
 
   ##
@@ -98,6 +95,10 @@ module PNP
       .sort_by! { |element| element[0] }
       .transpose[1]
       .reverse
+  end
+
+  def refill_bolts
+    Glue.players.each(&:refill_bolts)
   end
 
   ##
@@ -145,11 +146,7 @@ module PNP
   # @param bnd [Binding] Binding to save from
   # @param file_name [String] File to save game state to
   def save_game(bnd, file_name)
-    data = {
-      players: Glue.players,
-      npcs: Glue.npcs,
-      vars: {},
-    }
+    data = { players: Glue.players, npcs: Glue.npcs, vars: {} }
 
     PNP.variables.each_pair do |var_name, value|
       data[:vars][var_name] = _sort_by_type(value)
@@ -193,7 +190,6 @@ module PNP
     # Critical throws are marked with !!
     def check(against = d100)
       Roll.new(against.to_i, self).tap { |r| puts r }
-      # dice.roll(self).tap { |r| puts r }
     end
 
     def |(other)
