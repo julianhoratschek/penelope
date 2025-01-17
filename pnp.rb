@@ -146,16 +146,11 @@ module PNP
   # @param bnd [Binding] Binding to save from
   # @param file_name [String] File to save game state to
   def save_game(bnd, file_name)
-    data = { players: Glue.players, npcs: Glue.npcs, vars: {} }
+    data = { players: Glue.players, npcs: Glue.npcs, npc_count: Npc.npc_count, vars: {} }
 
-    PNP.variables.each_pair do |var_name, value|
-      data[:vars][var_name] = _sort_by_type(value)
-    end
-
-    bnd.local_variables.each do |var_name|
-      value = bnd.local_variable_get(var_name)
-      data[:vars][var_name] = _sort_by_type(value)
-    end
+    PNP.variables
+       .merge(bnd.local_variables.to_h { |name| [name, bnd.local_variable_get(name)] })
+       .each_pair { |var_name, value| data[:vars][var_name] = _sort_by_type(value) }
 
     data[:vars].delete(:_)
 
@@ -175,6 +170,7 @@ module PNP
 
     Glue.players = data[:players]
     Glue.npcs = data[:npcs]
+    Npc.npc_count = data[:npc_count]
 
     data[:vars].each_pair do |var_name, where|
       PNP.variables[var_name] = _get_by_type(where)

@@ -1,5 +1,7 @@
 # frozen_string_literal: false
 
+##
+# Overseer-class keeping all instances of players and npcs
 module Glue
   @@players = []
   @@npcs = []
@@ -20,6 +22,10 @@ module Glue
     @@npcs = other
   end
 
+  ##
+  # Get player or npc instance by its :name Attribute
+  # @param name [String] Must match exactly (not in case) the :name Attribute
+  # @return [Player, Npc, NilClass]
   def self.find(name)
     idx = @@players.index { |player| player.name.downcase == name.downcase }
     return @@players[idx] unless idx.nil?

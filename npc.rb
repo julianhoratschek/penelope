@@ -10,7 +10,7 @@ class Npc < Character
   @npc_count ||= {}
 
   class << self
-    attr_reader :npc_count
+    attr_accessor :npc_count
   end
 
   ##
@@ -31,21 +31,26 @@ class Npc < Character
     count
   end
 
+  ##
+  # Overrides rename from Character to count npcs anew
   def rename(new_name)
     super(new_name)
     tap { count }
   end
 
+  ##
+  # Creates <other>-count Instance-copies of this Npc
+  # @param other [Integer]
+  # @return [Array<Npc>]
   def *(other)
     Array.new(other) { Npc.new(**@attributes) }
   end
 
   def to_s
-    Npc.npc_count.to_s + ' ' + super
+    "(#{Npc.npc_count[@attributes[:name]]}) #{super}"
   end
 
   def inspect
-    to_s
+    "(#{Npc.npc_count[@attributes[:name]]}) #{super}"
   end
 end
-

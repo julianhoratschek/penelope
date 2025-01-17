@@ -70,6 +70,10 @@ class Roll
     !@success
   end
 
+  ##
+  # other must implement to_i to be used in coerce
+  # @param other [Object.to_i]
+  # @return [Array<Roll>]
   def coerce(other)
     [Roll.new(other.to_i, nil), self]
   end
