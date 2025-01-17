@@ -42,6 +42,10 @@ class Dice
     roll.to_s
   end
 
+  def inspect
+    to_s
+  end
+
   def to_i
     roll.to_i
   end
