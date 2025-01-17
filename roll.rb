@@ -23,26 +23,22 @@ class Roll
     evaluate
   end
 
-  def check(against)
-    case against
-    when Integer then Roll.new(@value, against)
-    when Roll then Roll.new(@value, against.value)
-    else self
-    end
+  def |(other)
+    Roll.new(other.to_i, @value)
   end
 
-  alias | check
+  alias check |
 
   def *(other)
-    Roll.new(@value * other, @against)
+    Roll.new(@value * other.to_i, @against)
   end
 
   def +(other)
-    Roll.new(@value + other, @against)
+    Roll.new(@value + other.to_i, @against)
   end
 
   def -(other)
-    Roll.new(@value - other, @against)
+    Roll.new(@value - other.to_i, @against)
   end
 
   def crit?
@@ -58,16 +54,14 @@ class Roll
   end
 
   def coerce(other)
-    [other, @value]
+    [Roll.new(other.to_i, nil), self]
   end
 
   def to_s
     return @value.to_s if @against.nil?
 
     code = @success ? 112 : 160
-
     crit_msg = @crit ? "\e[38;5;160m󱈸 " : ''
-
     "#{crit_msg}\e[38;5;#{code}m #{@against} \e[38;5;#{code}m󰝮 #{@value}\e[0m"
   end
 
@@ -76,6 +70,10 @@ class Roll
   end
 
   def inspect
-    to_s
+    return @value.to_s if @against.nil?
+
+    crit_msg = @crit ? '[CRIT] ' : ''
+    outcome = @success ? 'Success' : 'Fail'
+    "#{crit_msg}#{outcome}  #{@against} 󰝮 #{@value}"
   end
 end

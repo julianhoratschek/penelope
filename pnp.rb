@@ -191,8 +191,15 @@ module PNP
     # Tests this Integer versus a die-roll.
     # The output is printed in colors (red: fail, green: success)
     # Critical throws are marked with !!
-    def check(dice = d100)
-      dice.roll(self).tap { |r| puts r }
+    def check(against = d100)
+      Roll.new(against.to_i, self).tap { |r| puts r }
+      # dice.roll(self).tap { |r| puts r }
+    end
+
+    def |(other)
+      return check(other) if other.is_a?(Dice) || other.is_a?(Roll)
+
+      super(other)
     end
 
     alias_method :ck, :check

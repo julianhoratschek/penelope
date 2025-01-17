@@ -31,11 +31,27 @@ class Dice
   ##
   # Create a new Roll instance and save it in this dices history
   def roll(against = nil)
-    @history.push(Roll.new(rand(@sides) + 1, against)).last
+    @history.push(Roll.new(rand(@sides) + 1, against&.to_i)).last
+  end
+
+  def |(other)
+    Roll.new(other.to_i, roll.to_i)
+  end
+
+  def +(other)
+    roll + other.to_i
+  end
+
+  def -(other)
+    roll - other.to_i
+  end
+
+  def *(other)
+    roll * other.to_i
   end
 
   def coerce(other)
-    [other, roll.to_i]
+    [Roll.new(other, nil), roll]
   end
 
   def to_s
@@ -43,7 +59,7 @@ class Dice
   end
 
   def inspect
-    to_s
+    roll.inspect
   end
 
   def to_i
