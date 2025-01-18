@@ -3,16 +3,14 @@
 ##
 # Holds information about one dice roll
 class Roll
+  include Comparable
+
   attr_reader :value, :against
 
-  ##
-  # Update success and critical values
-  def evaluate
-    return if @against.nil?
-
-    @success = @value <= @against
-    @crit = @success ? @value <= @against / 10 : 100 - @against / 10 < @value
+  def <=>(other)
+    @value <=> other.to_i
   end
+
 
   def initialize(value, against = nil)
     @value = value
@@ -103,5 +101,16 @@ class Roll
     crit_msg = @crit ? '[CRIT] ' : ''
     outcome = @success ? 'Success' : 'Fail'
     "#{crit_msg}#{outcome}  #{@against} 󰝮 #{@value}"
+  end
+
+  private
+
+  ##
+  # Update success and critical values
+  def evaluate
+    return if @against.nil?
+
+    @success = @value <= @against
+    @crit = @success ? @value <= @against / 10 : 100 - @against / 10 < @value
   end
 end

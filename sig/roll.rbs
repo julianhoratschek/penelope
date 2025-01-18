@@ -1,0 +1,79 @@
+#
+# Holds information about one dice roll
+class Roll
+  @value: untyped
+
+  @against: untyped
+
+  @success: untyped
+
+  @crit: untyped
+
+  include Comparable
+
+  attr_reader value: untyped
+
+  attr_reader against: untyped
+
+  def <=>: (untyped other) -> untyped
+
+  def initialize: (untyped value, ?untyped? against) -> void
+
+  #
+  # Check value of this roll against another value
+  # @param other [Integer, Dice, Roll] Value to check this roll against
+  # @return [Roll] A new roll with other.to_i as value and @value as against
+  def |: (untyped other) -> untyped
+
+  alias check |
+
+  #
+  # Creates new Roll with self.value multiplied by other
+  # @param other [Integer, Roll, Dice]
+  # @return [Roll]
+  def *: (untyped other) -> untyped
+
+  def +: (untyped other) -> untyped
+
+  def -: (untyped other) -> untyped
+
+  #
+  # Return true if this roll was critical. If success or failure should be determined by succ?
+  # @return [Boolean]
+  def crit?: () -> untyped
+
+  #
+  # Returns true if this roll was a success, otherwise false
+  # @return [Boolean]
+  def succ?: () -> untyped
+
+  #
+  # Returns true if this roll was a failure, otherwise true
+  # @return [Boolean]
+  def fail?: () -> untyped
+
+  #
+  # other must implement to_i to be used in coerce
+  # @param other [Object.to_i]
+  # @return [Array<Roll>]
+  def coerce: (untyped other) -> ::Array[untyped | self]
+
+  #
+  # Pretty representation of this roll containing information about success, critical status
+  # as well as value and what it was measured against
+  # @return [String]
+  def to_s: () -> (untyped | ::String)
+
+  #
+  # Returns the integer value of this roll
+  # @return [Integer]
+  def to_i: () -> untyped
+
+  def inspect: () -> (untyped | ::String)
+
+  private
+
+  #
+  # Update success and critical values
+  def evaluate: () -> (nil | untyped)
+end
